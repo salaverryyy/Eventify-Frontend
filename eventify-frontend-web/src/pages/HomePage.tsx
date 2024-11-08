@@ -39,8 +39,8 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleCreateEvent = () => {
-    navigate('/create-event'); // Ajusta esta ruta según la página de creación de eventos
-  };
+    navigate('/create-event');
+};
 
   return (
     <div className="container mx-auto p-4">
