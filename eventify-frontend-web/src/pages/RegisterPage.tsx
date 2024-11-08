@@ -26,7 +26,6 @@ const RegisterPage: React.FC = () => {
     try {
       const response = await axios.post('http://localhost:8080/auth/signup', formData);
       if (response.status === 200) {
-        // Redirigir a la página de inicio de sesión después del registro exitoso
         navigate('/login', { replace: true });
       }
     } catch (error) {
@@ -35,11 +34,15 @@ const RegisterPage: React.FC = () => {
     }
   };
 
+  const handleLoginRedirect = () => {
+    navigate('/login');
+  };
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-blue-600">Crear Cuenta</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 to-purple-600">
+      <div className="w-full max-w-lg p-10 space-y-6 bg-white rounded-lg shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-blue-700">Crear Cuenta</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <InputField
             label="Nombre"
             name="firstName"
@@ -82,10 +85,22 @@ const RegisterPage: React.FC = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
           />
-          <button type="submit" className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+          <button
+            type="submit"
+            className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
             Registrarse
           </button>
         </form>
+        <div className="text-center">
+          <p className="text-gray-600">¿Ya tienes una cuenta?</p>
+          <button
+            onClick={handleLoginRedirect}
+            className="mt-3 text-blue-500 hover:underline font-semibold"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
       </div>
     </div>
   );
