@@ -40,7 +40,11 @@ const HomePage: React.FC = () => {
 
   const handleCreateEvent = () => {
     navigate('/create-event');
-};
+  };
+
+  const handleMemoryClick = (memoryId: number) => {
+    navigate(`/album/${memoryId}`);
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -49,22 +53,26 @@ const HomePage: React.FC = () => {
         {/* Botón para crear un nuevo evento */}
         <div
           onClick={handleCreateEvent}
-          className="flex items-center justify-center border rounded-lg overflow-hidden shadow-md cursor-pointer bg-blue-500 text-white"
-          style={{ height: '100%' }}
+          className="border rounded-lg overflow-hidden shadow-md bg-blue-500 flex items-center justify-center cursor-pointer"
+          style={{ minHeight: '250px' }} // Ajusta la altura según sea necesario
         >
-          <span className="text-4xl font-bold">+</span>
+          <span className="text-white text-4xl">+</span>
         </div>
 
         {/* Cuadros de eventos y recuerdos */}
         {memories.length > 0 ? (
           memories.map((memory) => (
-            <div key={memory.memoryId} className="border rounded-lg overflow-hidden shadow-md">
+            <div
+              key={memory.memoryId}
+              onClick={() => handleMemoryClick(memory.memoryId)}
+              className="border rounded-lg overflow-hidden shadow-md cursor-pointer"
+            >
               <img src={memory.coverPhoto} alt="Cover" className="w-full h-48 object-cover" />
               <div className="p-4">
                 {memory.event ? (
                   <>
                     <h2 className="text-xl font-bold">{memory.event.eventName}</h2>
-                    <p>Fecha del Evento: {memory.event.eventDate}</p>
+                    <p>Fecha del Evento: {new Date(memory.event.eventDate).toLocaleDateString()}</p>
                   </>
                 ) : (
                   <p>Sin evento asociado</p>

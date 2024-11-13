@@ -6,13 +6,14 @@ import axios from 'axios';
 const CreateMemoryPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { eventId } = location.state || {}; // Obtenemos el eventId pasado desde CreateEventPage
+    const { eventId } = location.state || {};
 
     const [formData, setFormData] = useState({
         memoryName: '',
         description: '',
         coverPhoto: null as File | null,
     });
+    const [error, setError] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -32,6 +33,7 @@ const CreateMemoryPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null); // Limpiar errores previos
 
         // Crear Memory
         const memoryData = new FormData();
@@ -51,7 +53,6 @@ const CreateMemoryPage: React.FC = () => {
 
             const memoryId = createMemoryResponse.data.id;
 
-            // Asociar Memory con el Evento
             if (eventId && memoryId) {
                 await axios.post(`http://localhost:8080/event/${eventId}/memory/${memoryId}`, {}, {
                     headers: {
@@ -60,10 +61,10 @@ const CreateMemoryPage: React.FC = () => {
                 });
             }
 
-            // Redirigir a la página principal o a otra página después de la creación exitosa
             navigate('/homePage');
         } catch (error) {
             console.error('Error creating memory:', error);
+            setError('Hubo un error al crear el memory. Por favor, revisa los datos e intenta de nuevo.');
         }
     };
 
@@ -71,6 +72,7 @@ const CreateMemoryPage: React.FC = () => {
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-bold text-center text-blue-600 mb-4">Crear Memory</h2>
+                {error && <p className="text-red-500 text-center">{error}</p>}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-gray-700">Nombre del Memory</label>
