@@ -1,5 +1,4 @@
 // src/components/ProfilePicture.tsx
-
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -9,7 +8,7 @@ interface ProfilePictureProps {
   onEdit: () => void;
   onSave: (newUrl: string) => void;
   onDeletePhoto: () => void;
-  onCancelEdit: () => void; // Nueva función para cancelar la edición
+  onCancelEdit: () => void;
 }
 
 const ProfilePicture: React.FC<ProfilePictureProps> = ({
@@ -18,7 +17,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   onEdit,
   onSave,
   onDeletePhoto,
-  onCancelEdit, // Recibe la nueva función
+  onCancelEdit,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -39,7 +38,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        onSave(response.data); // Llamamos a onSave con la URL de la imagen subida
+        onSave(response.data); // Llama a onSave con la URL de la imagen subida
       } catch (error) {
         console.error("Error uploading profile picture:", error);
       }
@@ -50,7 +49,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
     <div className="relative flex flex-col items-center">
       <div className="relative">
         <img
-          src={profilePicUrl || "/path/to/default/profile-pic.jpg"} // Ruta a la imagen por defecto
+          src={profilePicUrl || "/default-profile-pic.jpg"} // Ruta a la imagen por defecto en la carpeta public
           alt="Profile"
           className="w-24 h-24 rounded-full object-cover"
         />
@@ -88,6 +87,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
 };
 
 export default ProfilePicture;
+
 
 
 
