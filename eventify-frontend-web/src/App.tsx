@@ -5,8 +5,12 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CreateEventPage from './pages/CreateEventPage';
 import CreateMemoryPage from './pages/CreateMemoryPage';
+
 import AlbumPage from './pages/AlbumPage';
 import ConfirmPage from './pages/ConfirmPage';
+import ProfilePage from './pages/ProfilePage';
+import PublicationsPage from './pages/PublicationsPage'; // Importa PublicationsPage
+
 
 const App = () => {
     return (
@@ -18,8 +22,12 @@ const App = () => {
             <Route path="/create-memory" element={<CreateMemoryPage />} />
             <Route path="/album/:memoryId" element={<AlbumPage />} />
             <Route path="/confirm/:invitationUUID" element={<ConfirmPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/publications" element={<PublicationsPage />} /> {/* Nueva ruta para PublicationsPage */}
         </Routes>
     );
 };
 
 export default App;
+
+
