@@ -13,6 +13,7 @@ const RegisterPage: React.FC = () => {
     password: '',
     confirmPassword: '',
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -28,9 +29,13 @@ const RegisterPage: React.FC = () => {
       if (response.status === 200) {
         navigate('/login', { replace: true });
       }
-    } catch (error) {
-      console.error('Error al registrar el usuario:', error);
-      alert('Hubo un problema al intentar registrar la cuenta. Inténtalo nuevamente.');
+    } catch (error: any) {
+      // Manejar errores específicos enviados desde el backend
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage('Hubo un problema al intentar registrar la cuenta. Inténtalo nuevamente.');
+      }
     }
   };
 
@@ -85,6 +90,8 @@ const RegisterPage: React.FC = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
           />
+                  {/* Mostrar mensaje de error si existe */}
+        {errorMessage && <div style={{ color: 'red', marginBottom: '10px' }}>{errorMessage}</div>}
           <button
             type="submit"
             className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300"

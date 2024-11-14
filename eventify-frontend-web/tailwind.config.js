@@ -7,5 +7,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require('daisyui', '@tailwindcss/forms')],
+  daisyui: {
+    themes: ['autumn', 'corporate'], // El tema 'autumn' tiene tonos naranjas
+  },
 };
