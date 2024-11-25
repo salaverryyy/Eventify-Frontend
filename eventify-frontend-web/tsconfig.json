@@ -7,7 +7,8 @@
   "compilerOptions": {
     "typeRoots": ["./node_modules/@types", "./src/declarations.d.ts"],
     "noImplicitAny": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
     // otras configuraciones
   }
   

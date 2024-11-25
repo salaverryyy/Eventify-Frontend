@@ -1,15 +1,14 @@
 // src/components/ProfilePicture.tsx
-
 import React, { useState } from 'react';
 import axios from 'axios';
 
 interface ProfilePictureProps {
   profilePicUrl: string | null;
+  onDeletePhoto: () => void;
   isEditPhoto: boolean;
   onEdit: () => void;
-  onSave: (newUrl: string) => void;
-  onDeletePhoto: () => void;
-  onCancelEdit: () => void; // Nueva función para cancelar la edición
+  onSave: (file: File) => void; // Cambiar el tipo aquí para aceptar un archivo
+  onCancelEdit: () => void;
 }
 
 const ProfilePicture: React.FC<ProfilePictureProps> = ({
@@ -18,7 +17,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   onEdit,
   onSave,
   onDeletePhoto,
-  onCancelEdit, // Recibe la nueva función
+  onCancelEdit,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -32,14 +31,14 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
+      console.log(formData)
       try {
         const response = await axios.post('http://localhost:8080/media/profile-pic', formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        onSave(response.data); // Llamamos a onSave con la URL de la imagen subida
+        onSave(response.data); // Llama a onSave con la URL de la imagen subida
       } catch (error) {
         console.error("Error uploading profile picture:", error);
       }
@@ -50,7 +49,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
     <div className="relative flex flex-col items-center">
       <div className="relative">
         <img
-          src={profilePicUrl || "/path/to/default/profile-pic.jpg"} // Ruta a la imagen por defecto
+          src={profilePicUrl || "/default-profile-pic.jpg"} // Ruta a la imagen por defecto en la carpeta public
           alt="Profile"
           className="w-24 h-24 rounded-full object-cover"
         />
@@ -88,6 +87,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
 };
 
 export default ProfilePicture;
+
 
 
 

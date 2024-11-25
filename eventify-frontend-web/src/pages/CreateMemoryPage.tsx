@@ -1,118 +1,80 @@
-// src/pages/CreateMemoryPage.tsx
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { createMemory, associateMemoryWithEvent } from '../api';
+import MemoryForm from '../components/MemoryForm';
 
 const CreateMemoryPage: React.FC = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { eventId } = location.state || {}; // Obtenemos el eventId pasado desde CreateEventPage
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { eventId } = location.state || {};
 
-    const [formData, setFormData] = useState({
-        memoryName: '',
-        description: '',
-        coverPhoto: null as File | null,
-    });
+  const [formData, setFormData] = useState({
+    memoryName: '',
+    description: '',
+    coverPhoto: null as File | null,
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+  // Actualizar el estado del formulario
+  const handleFormDataChange = (newFormData: typeof formData) => {
+    setFormData(newFormData);
+  };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setFormData((prev) => ({
-            ...prev,
-            coverPhoto: file,
-        }));
-    };
+  // Quitar la foto de portada seleccionada
+  const handleRemoveCoverPhoto = () => {
+    setFormData((prev) => ({ ...prev, coverPhoto: null }));
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  // Manejar el envío del formulario
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-        // Crear Memory
-        const memoryData = new FormData();
-        memoryData.append('memoryName', formData.memoryName);
-        memoryData.append('description', formData.description);
-        if (formData.coverPhoto) {
-            memoryData.append('coverPhoto', formData.coverPhoto);
-        }
+    const memoryData = new FormData();
+    memoryData.append('memoryName', formData.memoryName);
+    memoryData.append('description', formData.description);
+    if (formData.coverPhoto) {
+      memoryData.append('coverPhoto', formData.coverPhoto);
+    }
 
-        try {
-            const createMemoryResponse = await axios.post('http://localhost:8080/memories', memoryData, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+    try {
+      const memoryResponse = await createMemory(memoryData);
+      const memoryId = memoryResponse.id;
 
-            const memoryId = createMemoryResponse.data.id;
+      if (eventId && memoryId) {
+        await associateMemoryWithEvent(eventId, memoryId);
+      }
 
-            // Asociar Memory con el Evento
-            if (eventId && memoryId) {
-                await axios.post(`http://localhost:8080/event/${eventId}/memory/${memoryId}`, {}, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-            }
+      navigate('/homePage');
+    } catch (err) {
+      console.error('Error creating memory:', err);
+      setError('Hubo un error al crear el memory. Por favor, revisa los datos e intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            // Redirigir a la página principal o a otra página después de la creación exitosa
-            navigate('/homePage');
-        } catch (error) {
-            console.error('Error creating memory:', error);
-        }
-    };
-
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold text-center text-blue-600 mb-4">Crear Memory</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-gray-700">Nombre del Memory</label>
-                        <input
-                            type="text"
-                            name="memoryName"
-                            value={formData.memoryName}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700">Descripción</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700">Foto de Portada</label>
-                        <input
-                            type="file"
-                            name="coverPhoto"
-                            onChange={handleFileChange}
-                            className="w-full px-3 py-2 border rounded"
-                            accept="image/*"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"
-                    >
-                        Crear Memory
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
+      <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Crear Memory</h2>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        <MemoryForm
+          formData={formData}
+          onFormDataChange={handleFormDataChange}
+          onRemoveCoverPhoto={handleRemoveCoverPhoto}
+          onSubmit={handleSubmit}
+        />
+        {loading && (
+          <p className="text-center text-blue-600 mt-4">Creando memory, por favor espera...</p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default CreateMemoryPage;
+
+

@@ -9,7 +9,7 @@ interface ProfileIconProps {
 const ProfileIcon: React.FC<ProfileIconProps> = ({ onClick }) => (
   <div
     onClick={onClick}
-    className="absolute top-5 right-5 cursor-pointer rounded-full p-2 bg-white/80 hover:bg-white shadow-lg transition-transform transform hover:scale-110"
+    className="absolute top-2 right-5 cursor-pointer rounded-full p-2 bg-white/80 hover:bg-white shadow-lg transition-transform transform hover:scale-110 "
     style={{
       display: 'flex',
       alignItems: 'center',
